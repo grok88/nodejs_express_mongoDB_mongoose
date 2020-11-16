@@ -1,5 +1,7 @@
 const http = require('http');
-const {addUser, getUsers} = require('./repository')
+const {usersController} = require("./usersController");
+// const {addUser, getUsers} = require('./repository')
+
 
 //cors
 let cors = (req, res) => {
@@ -15,6 +17,10 @@ let cors = (req, res) => {
 	return false
 }
 
+process.on('unhandledRejection', (reason, p) => {
+	console.log(reason, p);
+})
+
 const server = http.createServer((req, res) => {
 	//cors
 	if (cors(req, res)) return;
@@ -22,20 +28,16 @@ const server = http.createServer((req, res) => {
 	debugger
 	switch (req.url) {
 		case '/users':
-			if (req.method === 'POST') {
-				addUser('Wow');
-				res.write(JSON.stringify({success: true}));
-			} else {
-				res.write(JSON.stringify(getUsers()));
-			}
+			usersController(req, res);
 			break;
 		case '/tasks':
 			res.write(`<h1>Tasks</h1>`);
+			res.end();
 			break
 		default:
-			res.write(`<h1>Page not found</h1>`)
+			res.write(`<h1>Page not found</h1>`);
+			res.end();
 	}
-	res.end()
 })
 
 server.listen(3000);
