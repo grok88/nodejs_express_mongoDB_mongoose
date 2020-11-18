@@ -1,4 +1,4 @@
-const {addUser, getUsers} = require('./repository');
+const {addUser, getUsers,deleteUser,getUser, updateUser} = require('./repository');
 
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -12,19 +12,22 @@ router.use(function timeLog(req, res, next) {
 // Important!!! '/' относительно уже от app.use('/users', users); - кот указываем в index.js -> то есть уже будет /users/
 
 //users
+
+//get all users
 router.get('/', async (req, res) => {
-	let users = await getUsers();
-	if (!!req.query.search){
-		users = users.filter(u => u.name.includes(req.query.search));
-}
+	let users = await getUsers(req.query.search);
+
+// 	if (!!req.query.search){
+// 		users = users.filter(u => u.name.includes(req.query.search));
+// }
 	res.send(users);
 });
-//user
-router.get('/:id', async (req, res) => {
+// get user by id
+ router.get('/:id', async (req, res) => {
 	const userId = req.params.id;
 
-	let users = await getUsers();
-	let user = users.find(u => u.id == userId);
+	let user = await getUser(userId);
+	// let user = users.find(u => u.id == userId);
 
 	if (user) {
 		res.send(user);
@@ -32,12 +35,26 @@ router.get('/:id', async (req, res) => {
 		res.send(404);
 	}
 });
-
+// create user
 router.post('/', async (req, res) => {
 	const name = req.body.name;
 	await addUser(name);
 	res.send({success: true});
 });
+
+// delete user by id
+router.delete('/:id', async (req, res) => {
+	const userId = req.params.id;
+	await  deleteUser(userId);
+	res.send(204);
+})
+// update userName by id
+router.put('/', async (req, res) => {
+	const userId = req.body.id;
+	const name = req.body.name;
+	await  updateUser(userId, name);
+	res.send({success:true});
+})
 
 module.exports = router;
 
