@@ -35,6 +35,7 @@ router.get('/', async (req, res) => {
 		res.send(404);
 	}
 });
+
 // create user
 router.post('/', async (req, res) => {
 	const name = req.body.name;
@@ -48,6 +49,7 @@ router.delete('/:id', async (req, res) => {
 	await  deleteUser(userId);
 	res.send(204);
 })
+
 // update userName by id
 router.put('/', async (req, res) => {
 	const userId = req.body.id;
